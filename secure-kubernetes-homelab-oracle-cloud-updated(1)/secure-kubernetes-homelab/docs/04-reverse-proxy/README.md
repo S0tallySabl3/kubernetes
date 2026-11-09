@@ -1,4 +1,4 @@
-# Ingress and reverse proxy — Traefik verified, web routing pending
+# Ingress and reverse proxy — Traefik and NGINX resources verified, web routing pending
 
 ## Observed state (2026-11-09)
 
@@ -18,12 +18,16 @@ ingress.networking.k8s.io/nginx-ingress created
 
 **Important distinction:** This proves the Kubernetes API accepted an Ingress resource named `nginx-ingress`; it does **not** prove that an NGINX Ingress controller is installed or that Traefik is processing that resource. An Ingress resource name does not determine the actual controller. The manifest's `spec.ingressClassName` and any legacy annotation must be inspected.
 
+## 2026-11-09 follow-up inventory
+
+A newer namespace-wide inspection confirms that `nginx-ingress` belongs to namespace `webserver` and **selects IngressClass `traefik`**. The `nginx-service` is a ClusterIP Service listening on TCP/80; the NGINX pod is healthy (1/1 Ready, no restarts). This resolves the earlier potential class mismatch, but does not yet prove a request successfully traverses Traefik to the backend. See [Phase 5 verification](phase-5-verification.md).
+
 ## Recheck commands
 
 ```bash
 sudo k3s kubectl get ingressclass
 sudo k3s kubectl get ingress -A -o wide
-sudo k3s kubectl describe ingress nginx-ingress
+sudo k3s kubectl describe ingress nginx-ingress -n webserver
 sudo k3s kubectl get svc traefik -n kube-system
 sudo k3s kubectl get pods -n kube-system
 ```
@@ -36,8 +40,8 @@ Keep traffic inside Tailscale for the current phase. Disable Tailscale Funnel un
 
 ## Pending tasks
 
-1. Verify the actual Ingress manifest and its IngressClass.
-2. Deploy and test a webserver Deployment and Service.
+1. Inspect Ingress routing rules, Service selector and ready EndpointSlices.
+2. Test the existing NGINX pod/Service without duplicating deployments.
 3. Check Service endpoints and Traefik route handling.
 4. Confirm access from an authorized tailnet device, with no unintended internet reachability.
 5. Implement deliberate TLS, DNS and monitoring as separate validated phases.
