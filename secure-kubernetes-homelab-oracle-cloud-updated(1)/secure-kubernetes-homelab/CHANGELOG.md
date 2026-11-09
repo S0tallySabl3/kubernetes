@@ -1,5 +1,14 @@
 # Change log
 
+## 2026-11-09 — Phase 5 resource inventory
+
+- Verified all-namespaces pod and Service listings; NGINX pod healthy with zero restarts and `nginx-service` exposed internally on TCP/80.
+- Verified `nginx-ingress` in namespace `webserver` selects the `traefik` IngressClass; ingress status includes an address.
+- Confirmed `traefik` is the default registered controller class.
+- Added [Phase 5 verification](docs/04-reverse-proxy/phase-5-verification.md) and clarified that end-to-end HTTP routing remains untested.
+- Four terminal screenshots sanitized locally; binary evidence needs separate repository upload.
+
+
 ## 2026-11-09 — Correct documentation build order
 
 - Renumbered phases to follow deployment dependencies: 01 Tailscale, 02 Oracle Cloud/Ubuntu, 03 Kubernetes/k3s, 04 Traefik ingress, 05 Security, 06 Monitoring.
