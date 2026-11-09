@@ -1,5 +1,14 @@
 # Change log
 
+## 2026-11-09 — Ingress backend and private HTTP tests
+
+- `kubectl describe ingress nginx-ingress -n webserver` shows Traefik IngressClass and NGINX service backend on port 80.
+- `kubectl get endpointslices -n webserver -l kubernetes.io/service-name=nginx-service` identifies a backend endpoint on port 8080.
+- A tailnet-IP `curl -I` returned **HTTP/1.1 200 OK**, `Content-Type: text/html`, and `Server: nginx/1.30.6`.
+- The successful HTTP response establishes reachability, but not conclusively whether that request traversed Traefik; a controlled Ingress test remains open.
+- Three new screenshots redacted locally; evidence archive exists separately and is not yet committed as binary images.
+
+
 ## 2026-11-09 — Phase 5 resource inventory
 
 - Verified all-namespaces pod and Service listings; NGINX pod healthy with zero restarts and `nginx-service` exposed internally on TCP/80.
