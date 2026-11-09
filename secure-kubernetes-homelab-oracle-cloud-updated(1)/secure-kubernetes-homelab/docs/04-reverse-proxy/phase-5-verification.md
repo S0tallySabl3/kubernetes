@@ -47,3 +47,31 @@ Check the Ingress backend name/port and whether Service endpoints include a read
 Four original terminal captures were locally sanitized by blacking out the terminal prompt's user and host identity only. Kubernetes resource names and commands were preserved. Redacted images are distributed separately until uploaded to `screenshots/04-reverse-proxy/`; do not upload the originals. Other network details in screenshots are private RFC1918 addresses; consider further masking when publishing outside the private repository.
 
 **Status:** Kubernetes inventory verified; Traefik-to-NGINX routing, DNS, TLS and internet-exposure controls require separate validation.
+
+## Follow-up validation — 2026-11-09
+
+Three follow-up commands were observed:
+
+```bash
+sudo k3s kubectl describe ingress nginx-ingress -n webserver
+sudo k3s kubectl get endpointslices -n webserver -l kubernetes.io/service-name=nginx-service
+curl -I http://<TAILSCALE_IP>
+```
+
+The Ingress report selects `traefik`, lists wildcard host `*`, path `/`, and backend `nginx-service:80`. The EndpointSlice output lists one IPv4 backend endpoint and port `8080`; this is consistent with a Service port 80 mapping to targetPort 8080 but its exact mapping should be checked in the Service spec. The tailnet-IP HTTP HEAD request returned `HTTP/1.1 200 OK`, `Content-Type: text/html`, and `Server: nginx/1.30.6`.
+
+**Evidence boundary:** This is strong proof of NGINX HTTP reachability, not conclusive proof that the request passed through Traefik. The Kubernetes API object/endpoint existence and an HTTP status alone are insufficient to establish the packet path.
+
+### Next controlled test
+
+Inspect the Service and Ingress definitions and check what binds port 80 on the node before concluding traffic flows through Traefik:
+
+```bash
+sudo k3s kubectl get svc nginx-service -n webserver -o yaml
+sudo k3s kubectl get ingress nginx-ingress -n webserver -o yaml
+sudo ss -ltnp '( sport = :80 )'
+```
+
+Then verify that the Traefik LoadBalancer's private entry point receives requests, ideally while watching Traefik access logs or by testing a unique path/router rule. A direct curl to an IP can hit a different listener; do not enable Funnel or add public ingress to test this.
+
+Three redacted evidence images are available in a separate local ZIP, **not yet uploaded into GitHub**. The redaction masks the user/host shell prompt and the Tailscale destination in the command.
