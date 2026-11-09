@@ -2,7 +2,7 @@
 
 Security-focused infrastructure lab migrated from local Windows/Ubuntu systems to an Oracle Cloud Infrastructure (OCI) VM. The aim is a **privately administered Kubernetes webserver** with reproducible verification and a transparent record of changes.
 
-> **Current documented state (2026-11-09):** Ubuntu 26.04.1 LTS ARM64 OCI instance running a single-node **k3s v1.37.2+k3s1** cluster. The node reports **Ready**. Traefik is installed and running. Administrative SSH over Tailscale has been demonstrated. The OCI Internet Gateway used during bootstrap was subsequently removed, with NAT-based outbound access reported and tested. An NGINX Ingress object was created, but **traffic handling by an NGINX controller and HTTP/HTTPS application access have not been verified**.
+> **Current documented state (2026-11-09):** Ubuntu 26.04.1 LTS ARM64 OCI instance running a single-node **k3s v1.37.2+k3s1** cluster. The node reports **Ready**. Traefik is installed and running. Administrative SSH over Tailscale has been demonstrated. The OCI Internet Gateway used during bootstrap was subsequently removed, with NAT-based outbound access reported and tested. An NGINX pod and Service are Running, and the existing `nginx-ingress` explicitly selects the **Traefik** IngressClass. **End-to-end routing, DNS and HTTPS have not yet been verified**.
 
 ## Current topology
 
@@ -30,7 +30,8 @@ The NAT Gateway permits outbound connections but does **not** accept unsolicited
 | k3s installation | Verified | Installer output |
 | k3s single-node readiness | Verified | `kubectl get nodes -o wide` |
 | Traefik controller and service | Verified running | `kubectl get pods -n kube-system`, `kubectl get svc traefik -n kube-system`, `kubectl get ingressclass` |
-| NGINX Ingress manifest | API object created | `kubectl apply -f nginx-ingress.yaml`; controller reconciliation **not** verified |
+| NGINX Ingress resource | Verified present, class `traefik` | 2026-11-09 namespace-wide ingress inventory; HTTP route **not** yet proven |
+| NGINX pod and Service | Verified Running / ClusterIP | 2026-11-09 all-pods and all-services inventory |
 | Webserver routing, TLS and browser validation | Pending | No end-to-end successful HTTPS proof yet |
 | Monitoring, backups and security review | Pending | — |
 
@@ -42,6 +43,7 @@ The NAT Gateway permits outbound connections but does **not** accept unsolicited
 - [OCI SSH troubleshooting](docs/02-oracle-cloud/ssh-and-troubleshooting.md)
 - [k3s installation and verification](docs/03-kubernetes/README.md)
 - [Traefik and ingress status](docs/04-reverse-proxy/README.md)
+- [Phase 5 — workload and Ingress verification](docs/04-reverse-proxy/phase-5-verification.md)
 - [Evidence inventory and publication guidelines](screenshots/README.md)
 - [Change history](CHANGELOG.md)
 
@@ -53,7 +55,7 @@ Previously committed proof remains under [screenshots/01-tailscale](screenshots/
 
 ## Roadmap
 
-1. Audit the NGINX IngressClass / Traefik mismatch and select one controller for the manifest.
+1. Verify that the existing `nginx-ingress` sends requests to the NGINX Service and ready endpoints through Traefik.
 2. Deploy a minimal web workload, Service and explicit IngressClass; verify in-cluster routing.
 3. Confirm only required private network access, and verify externally exposed ports are closed.
 4. Implement TLS and DNS only after choosing a deliberate exposure model.
