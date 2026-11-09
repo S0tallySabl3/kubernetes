@@ -1,4 +1,4 @@
-# Phase 04 — Security Hardening (planned)
+# Phase 05 — Security Hardening (planned)
 
 SSH login is confirmed, but **least-privilege ingress and OS hardening are not verified yet**.
 

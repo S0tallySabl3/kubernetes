@@ -1,5 +1,10 @@
 # Change log
 
+## 2026-11-09 — Correct documentation build order
+
+- Renumbered phases to follow deployment dependencies: 01 Tailscale, 02 Oracle Cloud/Ubuntu, 03 Kubernetes/k3s, 04 Traefik ingress, 05 Security, 06 Monitoring.
+- Preserved existing documentation content and updated cross-references.
+
 ## 2026-11-09 — k3s and private-access documentation refresh
 
 - Corrected the project's active state: k3s installation, Ready control-plane node, running Traefik controller and Kubernetes ingress object creation now documented with command evidence.

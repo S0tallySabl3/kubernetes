@@ -40,8 +40,8 @@ The NAT Gateway permits outbound connections but does **not** accept unsolicited
 - [Tailscale deployment](docs/01-tailscale/README.md)
 - [OCI network history and troubleshooting](docs/02-oracle-cloud/networking.md)
 - [OCI SSH troubleshooting](docs/02-oracle-cloud/ssh-and-troubleshooting.md)
-- [k3s installation and verification](docs/02-kubernetes/README.md)
-- [Traefik and ingress status](docs/03-reverse-proxy/README.md)
+- [k3s installation and verification](docs/03-kubernetes/README.md)
+- [Traefik and ingress status](docs/04-reverse-proxy/README.md)
 - [Evidence inventory and publication guidelines](screenshots/README.md)
 - [Change history](CHANGELOG.md)
 
