@@ -36,6 +36,10 @@ The NAT Gateway permits outbound connections but does **not** accept unsolicited
 | Traefik path, TLS and browser validation | Pending | Explicit Traefik routing test and HTTPS proof still required |
 | Monitoring, backups and security review | Pending | — |
 
+## Reusable manifests
+
+- [NGINX ClusterIP Service](manifests/nginx-service.yaml) — sanitized declarative YAML from the observed live Service; port 80 forwards to targetPort 8080, selecting `app: nginx`. Deployment and Ingress manifests are pending source inspection.
+
 ## Documentation
 
 - [Architecture and migration decisions](docs/architecture.md)
