@@ -1,5 +1,15 @@
 # Change log
 
+## 2026-11-10 — Phase 5 Traefik-to-NGINX routing confirmed
+
+- Created a temporary `curlimages/curl` pod and confirmed it entered Running state.
+- Executed an HTTP HEAD request to `http://traefik.kube-system.svc.cluster.local/` from the pod using `kubectl exec`.
+- DNS resolution succeeded; TCP connected to Traefik Service port 80; response was **HTTP/1.1 200 OK**, with `Server: nginx/1.30.6` and `Content-Length: 896`.
+- Marked **Traefik → NGINX HTTP ingress routing verified**. TLS, client hostname resolution, and external exposure audit remain pending.
+- Redacted original terminal screenshot for evidence; binary screenshot retained as a separate downloadable file, not committed to GitHub.
+- Temporary diagnostic pod must be manually deleted after testing.
+
+
 ## 2026-11-10 — Publish sanitized Traefik Ingress manifest
 
 - Added `manifests/nginx-ingress.yaml` matching observed `webserver/nginx-ingress`: class `traefik`, hostless `/` Prefix rule, backend `nginx-service:80`.
