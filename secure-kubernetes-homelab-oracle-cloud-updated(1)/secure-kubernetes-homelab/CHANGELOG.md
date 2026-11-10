@@ -1,5 +1,13 @@
 # Change log
 
+## 2026-11-10 — Diagnostic test pod cleanup confirmed
+
+- Ran `sudo k3s kubectl delete pod ingress-test --ignore-not-found`.
+- Kubernetes returned `pod "ingress-test" deleted from default namespace`.
+- Recorded successful deletion response. A separate post-deletion pod listing has not been captured.
+- Source terminal screenshot contains an identifying prompt and is not published unredacted.
+
+
 ## 2026-11-10 — Phase 5 Traefik-to-NGINX routing confirmed
 
 - Created a temporary `curlimages/curl` pod and confirmed it entered Running state.
