@@ -2,7 +2,7 @@
 
 Security-focused infrastructure lab migrated from local Windows/Ubuntu systems to an Oracle Cloud Infrastructure (OCI) VM. The aim is a **privately administered Kubernetes webserver** with reproducible verification and a transparent record of changes.
 
-> **Current documented state (2026-11-09):** Ubuntu 26.04.1 LTS ARM64 OCI instance running a single-node **k3s v1.37.2+k3s1** cluster. The node reports **Ready**. Traefik is installed and running. Administrative SSH over Tailscale has been demonstrated. The OCI Internet Gateway used during bootstrap was subsequently removed, with NAT-based outbound access reported and tested. An NGINX pod and Service are Running, and the existing `nginx-ingress` explicitly selects the **Traefik** IngressClass. **HTTP 200 from the tailnet IP and a populated NGINX EndpointSlice are verified; the exact HTTP path through Traefik, DNS and HTTPS still need validation**.
+> **Current documented state (2026-11-09):** Ubuntu 26.04.1 LTS ARM64 OCI instance running a single-node **k3s v1.37.2+k3s1** cluster. The node reports **Ready**. Traefik is installed and running. Administrative SSH over Tailscale has been demonstrated. The OCI Internet Gateway used during bootstrap was subsequently removed, with NAT-based outbound access reported and tested. An NGINX pod and Service are Running, and the existing `nginx-ingress` explicitly selects the **Traefik** IngressClass. **HTTP 200 from the tailnet IP and a populated NGINX EndpointSlice are verified; Traefik-to-NGINX routing has now been verified directly through Traefik's in-cluster Service; DNS for client devices and HTTPS still need validation**.
 
 ## Current topology
 
@@ -33,7 +33,8 @@ The NAT Gateway permits outbound connections but does **not** accept unsolicited
 | NGINX Ingress resource | Verified present, class `traefik` | 2026-11-09 namespace-wide ingress inventory; HTTP route **not** yet proven |
 | NGINX pod and Service | Verified Running / ClusterIP | 2026-11-09 all-pods and all-services inventory |
 | HTTP access to NGINX via tailnet IP | Verified | 2026-11-09 `curl -I` returned HTTP 200 and NGINX server header |
-| Traefik path, TLS and browser validation | Pending | Explicit Traefik routing test and HTTPS proof still required |
+| Traefik-to-NGINX routing | Verified | 2026-11-10 in-cluster curl to Traefik Service returned NGINX HTTP 200 |
+| Private DNS and TLS | Pending | HTTPS proof still required |
 | Monitoring, backups and security review | Pending | — |
 
 ## Reusable manifests
@@ -61,7 +62,7 @@ Previously committed proof remains under [screenshots/01-tailscale](screenshots/
 
 ## Roadmap
 
-1. Verify that the existing `nginx-ingress` sends requests to the NGINX Service and ready endpoints through Traefik.
+1. Complete repository manifests, and deploy private HTTPS/TLS after selecting a certificate and hostname strategy.
 2. Deploy a minimal web workload, Service and explicit IngressClass; verify in-cluster routing.
 3. Confirm only required private network access, and verify externally exposed ports are closed.
 4. Implement TLS and DNS only after choosing a deliberate exposure model.
