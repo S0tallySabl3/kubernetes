@@ -97,3 +97,35 @@ sudo k3s kubectl run ingress-test --image=curlimages/curl --restart=Never --rm -
 ```
 
 A successful NGINX HTTP response from that destination confirms the controller routed an internal request. This uses the image registry and thus requires egress; if image pull fails, use an already available debug pod or test existing Traefik Service IP via the node while considering node-local routing. No cloud exposure changes are necessary.
+
+## Confirmed Traefik-to-NGINX routing — 2026-11-10
+
+A temporary pod using `curlimages/curl` was successfully created and showed `1/1 Running`. From that pod, this command was executed:
+
+```bash
+sudo k3s kubectl exec ingress-test -- \
+  curl -I -v --max-time 10 http://traefik.kube-system.svc.cluster.local/
+```
+
+Observed output (identifying internal IPs omitted):
+
+```text
+Host traefik.kube-system.svc.cluster.local:80 was resolved.
+Established connection to traefik.kube-system.svc.cluster.local port 80
+> HEAD / HTTP/1.1
+> Host: traefik.kube-system.svc.cluster.local
+< HTTP/1.1 200 OK
+< Content-Type: text/html
+< Content-Length: 896
+< Server: nginx/1.30.6
+```
+
+**Result: PASS.** Because the destination was explicitly Traefik's internal Kubernetes Service and the response was from NGINX, this verifies that the configured Traefik ingress route forwards HTTP traffic to the NGINX backend. The test does **not** validate client DNS, TLS or absence of public reachability.
+
+Cleanup (required; the current diagnostic pod was started with `sleep 3600` and is not automatically removed):
+
+```bash
+sudo k3s kubectl delete pod ingress-test --ignore-not-found
+```
+
+A locally redacted screenshot preserves the test and successful response. The image has not yet been committed to GitHub.
