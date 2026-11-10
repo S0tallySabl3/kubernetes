@@ -1,5 +1,12 @@
 # Change log
 
+## 2026-11-09 — Publish clean NGINX Service manifest
+
+- Added `manifests/nginx-service.yaml` using observed Service spec (`ClusterIP`, selector `app: nginx`, TCP 80 → 8080).
+- Omitted generated Service UID, timestamps, resourceVersion, and allocated ClusterIP.
+- Prepared separately redacted screenshot of the live Service YAML; image is not yet committed to the repository.
+
+
 ## 2026-11-09 — Ingress backend and private HTTP tests
 
 - `kubectl describe ingress nginx-ingress -n webserver` shows Traefik IngressClass and NGINX service backend on port 80.
