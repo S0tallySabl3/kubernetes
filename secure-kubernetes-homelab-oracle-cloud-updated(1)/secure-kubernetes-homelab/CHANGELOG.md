@@ -1,5 +1,13 @@
 # Change log
 
+## 2026-11-10 — Publish sanitized Traefik Ingress manifest
+
+- Added `manifests/nginx-ingress.yaml` matching observed `webserver/nginx-ingress`: class `traefik`, hostless `/` Prefix rule, backend `nginx-service:80`.
+- Verified Traefik LoadBalancer Service exists (ports 80 and 443 via K3s ServiceLB NodePorts); exact private addresses omitted from committed manifests.
+- Removed generated Ingress metadata/status fields from the reusable YAML. No routing traffic test completed in this step.
+- Two redacted terminal screenshots packaged separately; binary evidence not yet uploaded to GitHub.
+
+
 ## 2026-11-09 — Publish clean NGINX Service manifest
 
 - Added `manifests/nginx-service.yaml` using observed Service spec (`ClusterIP`, selector `app: nginx`, TCP 80 → 8080).
