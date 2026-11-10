@@ -1,4 +1,4 @@
-# Ingress and reverse proxy — Traefik and NGINX resources verified, web routing pending
+# Ingress and reverse proxy — Traefik and NGINX resources verified, HTTP web routing verified
 
 ## Observed state (2026-11-09)
 
@@ -45,3 +45,7 @@ Keep traffic inside Tailscale for the current phase. Disable Tailscale Funnel un
 3. Check Service endpoints and Traefik route handling.
 4. Confirm access from an authorized tailnet device, with no unintended internet reachability.
 5. Implement deliberate TLS, DNS and monitoring as separate validated phases.
+
+## 2026-11-10 — Routing verification passed
+
+A temporary in-cluster curl pod requested `http://traefik.kube-system.svc.cluster.local/` and received `HTTP/1.1 200 OK`, `Content-Type: text/html`, `Server: nginx/1.30.6`. This directly verifies Traefik-to-NGINX routing through the existing Ingress. See [Phase 5 verification](phase-5-verification.md) for full evidence, caveats, and diagnostic-pod cleanup. Private DNS, TLS and OCI exposure checks remain future steps.
