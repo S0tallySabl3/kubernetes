@@ -81,3 +81,19 @@ Three redacted evidence images are available in a separate local ZIP, **not yet 
 The observed Service export matches the clean configuration in [`../../manifests/nginx-service.yaml`](../../manifests/nginx-service.yaml). Its declared `selector: {app: nginx}` selects workload pods, `port: 80` is the Service-facing TCP port, and `targetPort: 8080` is the destination port on matching pods. The Service type is `ClusterIP`.
 
 Do **not** commit the live `kubectl get ... -o yaml` output verbatim: Kubernetes-generated `uid`, `resourceVersion`, `creationTimestamp`, `clusterIP`, `clusterIPs`, `status`, and the last-applied annotation are not needed in the reproducible manifest. A redacted screenshot of the original output is stored separately for manual evidence upload.
+
+## 2026-11-10 — Complete Ingress YAML inspection
+
+The live `webserver/nginx-ingress` has `spec.ingressClassName: traefik` with an HTTP `/` Prefix path, no host restriction, and backend `nginx-service` port 80. The Traefik `kube-system/traefik` Service is a LoadBalancer with HTTP and HTTPS exposed at service ports 80 and 443 via K3s ServiceLB/NodePort configuration. **This confirms object configuration, not end-to-end Traefik traffic flow.**
+
+The sanitized declarative Ingress is committed at [`../../manifests/nginx-ingress.yaml`](../../manifests/nginx-ingress.yaml). The source export includes auto-generated metadata such as UID, resource version, timestamp, last-applied annotation, and status address; these are excluded from the manifest. Source screenshots have been redacted and stored as a separate downloadable archive, not yet committed to this repository.
+
+### Final Traefik forwarding test
+
+Run an ephemeral curl pod that targets the Traefik Service's ClusterIP DNS name inside Kubernetes:
+
+```bash
+sudo k3s kubectl run ingress-test --image=curlimages/curl --restart=Never --rm -it -- curl -I --max-time 10 http://traefik.kube-system.svc.cluster.local/
+```
+
+A successful NGINX HTTP response from that destination confirms the controller routed an internal request. This uses the image registry and thus requires egress; if image pull fails, use an already available debug pod or test existing Traefik Service IP via the node while considering node-local routing. No cloud exposure changes are necessary.
