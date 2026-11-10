@@ -75,3 +75,9 @@ sudo ss -ltnp '( sport = :80 )'
 Then verify that the Traefik LoadBalancer's private entry point receives requests, ideally while watching Traefik access logs or by testing a unique path/router rule. A direct curl to an IP can hit a different listener; do not enable Funnel or add public ingress to test this.
 
 Three redacted evidence images are available in a separate local ZIP, **not yet uploaded into GitHub**. The redaction masks the user/host shell prompt and the Tailscale destination in the command.
+
+## Reproducible NGINX Service definition
+
+The observed Service export matches the clean configuration in [`../../manifests/nginx-service.yaml`](../../manifests/nginx-service.yaml). Its declared `selector: {app: nginx}` selects workload pods, `port: 80` is the Service-facing TCP port, and `targetPort: 8080` is the destination port on matching pods. The Service type is `ClusterIP`.
+
+Do **not** commit the live `kubectl get ... -o yaml` output verbatim: Kubernetes-generated `uid`, `resourceVersion`, `creationTimestamp`, `clusterIP`, `clusterIPs`, `status`, and the last-applied annotation are not needed in the reproducible manifest. A redacted screenshot of the original output is stored separately for manual evidence upload.
