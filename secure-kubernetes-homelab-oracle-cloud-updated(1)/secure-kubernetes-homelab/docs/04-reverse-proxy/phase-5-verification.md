@@ -129,3 +129,19 @@ sudo k3s kubectl delete pod ingress-test --ignore-not-found
 ```
 
 A locally redacted screenshot preserves the test and successful response. The image has not yet been committed to GitHub.
+
+## Cleanup evidence — 2026-11-10
+
+After the successful Traefik routing check, the temporary diagnostic pod was deleted:
+
+```bash
+sudo k3s kubectl delete pod ingress-test --ignore-not-found
+```
+
+Kubernetes confirmed:
+
+```text
+pod "ingress-test" deleted from default namespace
+```
+
+**Result:** deletion acknowledged by the Kubernetes API. No later `get pod` check was supplied, so this records the successful deletion command rather than an independently checked final namespace inventory. The identifying terminal prompt is omitted from published documentation; raw screenshot not uploaded to GitHub.
