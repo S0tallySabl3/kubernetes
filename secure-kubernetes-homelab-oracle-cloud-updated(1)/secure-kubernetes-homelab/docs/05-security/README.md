@@ -10,9 +10,14 @@ SSH login is confirmed, but **least-privilege ingress and OS hardening are not v
 - [ ] Confirm `sshd` is listening only where intended and public-key auth works.
 - [ ] Review guest firewall, login policy, automatic updates and security patches.
 - [ ] Document SSH host-key verification and safe key storage (never commit private keys).
-- [ ] Decide whether to deploy Tailscale on OCI and eliminate public administrative access in a later migration.
+- [x] Establish Tailscale private administration access to OCI (verified in prior phases).
+- [x] Generate Tailscale TLS certificate for the existing hostname and verify key files are root-owned and mode `600` (2026-11-11).
+- [ ] Configure and verify Traefik TLS termination and Kubernetes Secret lifecycle (Phase 6B–6C).
+- [ ] Establish certificate and TLS Secret renewal before 2027-02-09.
 - [ ] Review Kubernetes API exposure, RBAC, secrets, network policies and container image provenance after cluster deployment.
 
 ## Why this matters
 
 A route table points packets to their next hop. It **does not enforce** who can connect to port 22. OCI ingress rules, host firewall policy and SSH authentication provide separate enforcement layers. Successful login does not prove these layers are configured with least privilege.
+
+See [Phase 6A certificate verification](../06-https-tls/phase-6a-certificate.md). The certificate issuance and file-permission checks are verified; the remaining host/network-hardening checklist is not implied complete.

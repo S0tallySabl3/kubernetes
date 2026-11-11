@@ -1,5 +1,14 @@
 # Change log
 
+## 2026-11-11 — Phase 6A certificate issuance verified
+
+- Generated a Let's Encrypt E2 certificate via `sudo tailscale cert` for the existing `.ts.net` machine hostname; recorded only redacted hostname details.
+- Confirmed certificate file and private key were written to `/etc/tailscale/certs/`, owner `root:root` and permission mode `600`.
+- Recorded X.509 validity window (2026-11-11 14:14:34 UTC through 2027-02-09 14:14:33 UTC) and matching SAN.
+- Prepared four terminal screenshots with identifying prompts and hostname redacted; binaries remain available separately and are not committed with the text documentation.
+- Added [Phase 6A notes](docs/06-https-tls/phase-6a-certificate.md) and aligned the existing monitoring documentation with Phase 7 numbering.
+- **Not yet done:** Kubernetes TLS Secret, HTTPS Ingress, TLS client handshake, automated renewal, independent origin exposure audit, or Cloudflare deployment.
+
 ## 2026-11-10 — Diagnostic test pod cleanup confirmed
 
 - Ran `sudo k3s kubectl delete pod ingress-test --ignore-not-found`.

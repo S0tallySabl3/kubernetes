@@ -2,19 +2,19 @@
 
 Security-focused infrastructure lab migrated from local Windows/Ubuntu systems to an Oracle Cloud Infrastructure (OCI) VM. The aim is a **privately administered Kubernetes webserver** with reproducible verification and a transparent record of changes.
 
-> **Current documented state (2026-11-09):** Ubuntu 26.04.1 LTS ARM64 OCI instance running a single-node **k3s v1.37.2+k3s1** cluster. The node reports **Ready**. Traefik is installed and running. Administrative SSH over Tailscale has been demonstrated. The OCI Internet Gateway used during bootstrap was subsequently removed, with NAT-based outbound access reported and tested. An NGINX pod and Service are Running, and the existing `nginx-ingress` explicitly selects the **Traefik** IngressClass. **HTTP 200 from the tailnet IP and a populated NGINX EndpointSlice are verified; Traefik-to-NGINX routing has now been verified directly through Traefik's in-cluster Service; DNS for client devices and HTTPS still need validation**.
+> **Current documented state (2026-11-11):** Oracle Cloud Ubuntu ARM64 VM with single-node k3s, working Traefik → NGINX HTTP routing, NAT egress and Tailscale private access. **Phase 6A complete:** Tailscale/Let's Encrypt certificate issued for the existing tailnet hostname; certificate and key are root-owned and mode `600`. **Traefik TLS termination and HTTPS client handshake are not configured/verified yet.**
 
 ## Current topology
 
 ```mermaid
 flowchart LR
-    Admin[Ubuntu administrator] <-->|Tailscale overlay| VM[OCI Ubuntu ARM64 VM\nSingle-node k3s]
-    NAT[OCI NAT Gateway] -->|Outbound connectivity only| Internet((Internet))
-    VM --> NAT
-    VM --> K3s[k3s control plane and workloads]
-    K3s --> Traefik[Traefik ingress controller\nRunning]
-    Traefik -. Future validated routing .-> App[Webserver workload\nNot yet verified]
-    Windows[Windows lab desktop] <-->|Earlier tailnet validation| Admin
+  Admin[Ubuntu admin laptop] <-->|Private Tailscale overlay| VM[OCI Ubuntu VM / single-node k3s]
+  VM --> Traefik[Traefik ingress: HTTP confirmed]
+  Traefik -->|Cluster HTTP| Service[NGINX ClusterIP Service]
+  Service --> NGINX[NGINX pod]
+  Cert[Tailscale TLS certificate + root-only key] -.->|Phase 6B pending| Traefik
+  VM -->|Outbound| NAT[OCI NAT Gateway]
+  NAT --> Internet((Internet))
 ```
 
 The NAT Gateway permits outbound connections but does **not** accept unsolicited inbound internet connections. Tailscale supplies the private administration overlay. The OCI subnet is shown as *Public Subnet* in historical provisioning screenshots; **do not confuse this label with proof of current public VM exposure**. Confirm effective VNIC public-IP assignment, route tables, and OCI security rules before making definitive exposure claims.
@@ -30,11 +30,13 @@ The NAT Gateway permits outbound connections but does **not** accept unsolicited
 | k3s installation | Verified | Installer output |
 | k3s single-node readiness | Verified | `kubectl get nodes -o wide` |
 | Traefik controller and service | Verified running | `kubectl get pods -n kube-system`, `kubectl get svc traefik -n kube-system`, `kubectl get ingressclass` |
-| NGINX Ingress resource | Verified present, class `traefik` | 2026-11-09 namespace-wide ingress inventory; HTTP route **not** yet proven |
+| NGINX Ingress resource | Verified, class `traefik` | 2026-11-10 Traefik-to-NGINX HTTP 200 |
+
 | NGINX pod and Service | Verified Running / ClusterIP | 2026-11-09 all-pods and all-services inventory |
 | HTTP access to NGINX via tailnet IP | Verified | 2026-11-09 `curl -I` returned HTTP 200 and NGINX server header |
 | Traefik-to-NGINX routing | Verified | 2026-11-10 in-cluster curl to Traefik Service returned NGINX HTTP 200 |
-| Private DNS and TLS | Pending | HTTPS proof still required |
+| Tailscale hostname certificate (Phase 6A) | **Verified issued and protected** | 2026-11-11 CLI, OpenSSL metadata and `ls -l` |
+| Traefik HTTPS, hostname and TLS handshake (Phases 6B–6C) | Pending | Certificate exists but is not yet configured in Traefik |
 | Monitoring, backups and security review | Pending | — |
 
 ## Reusable manifests
@@ -51,21 +53,23 @@ The NAT Gateway permits outbound connections but does **not** accept unsolicited
 - [k3s installation and verification](docs/03-kubernetes/README.md)
 - [Traefik and ingress status](docs/04-reverse-proxy/README.md)
 - [Phase 5 — workload and Ingress verification](docs/04-reverse-proxy/phase-5-verification.md)
+- [Phase 6A — Tailscale HTTPS certificate and verification](docs/06-https-tls/phase-6a-certificate.md)
+- [Monitoring and recovery (planned)](docs/07-monitoring/README.md)
 - [Evidence inventory and publication guidelines](screenshots/README.md)
 - [Change history](CHANGELOG.md)
 
 ## Screenshot evidence
 
-Previously committed proof remains under [screenshots/01-tailscale](screenshots/01-tailscale) and [screenshots/02-oracle-cloud](screenshots/02-oracle-cloud). Additional redacted November 2026 screenshots are cataloged in [the evidence index](screenshots/README.md); not all of those new binary images are uploaded to this repository yet.
+Previously committed proof remains under [screenshots/01-tailscale](screenshots/01-tailscale) and [screenshots/02-oracle-cloud](screenshots/02-oracle-cloud). Phase 6A screenshot evidence was sanitized and prepared as a separate archive; its binary screenshots are not part of this commit. See [the evidence index](screenshots/README.md) for status.
 
 **Publishing policy:** No private SSH keys, Tailscale authentication keys, identity-bearing hostnames, unredacted IP details, cloud OCIDs, account emails, or unredacted originals. Revoke any previously exposed authentication key even if its screenshot is later redacted.
 
 ## Roadmap
 
-1. Complete repository manifests, and deploy private HTTPS/TLS after selecting a certificate and hostname strategy.
-2. Deploy a minimal web workload, Service and explicit IngressClass; verify in-cluster routing.
-3. Confirm only required private network access, and verify externally exposed ports are closed.
-4. Implement TLS and DNS only after choosing a deliberate exposure model.
-5. Add least-privilege controls, monitoring, backups and restore testing.
+1. **Phase 6A complete:** certificate issued, dates/identity inspected and root-only file permissions verified.
+2. **Phase 6B pending:** store the certificate in a namespace-scoped Kubernetes TLS Secret and enable the existing Traefik HTTPS Ingress.
+3. **Phase 6C pending:** validate chain, live server hostname, TLS handshake, private Tailscale HTTPS response and public exposure boundaries.
+4. **Phase 6D pending:** publish verified 6B–6C steps and sanitized screenshots.
+5. Later: Cloudflare Tunnel/CDN/WAF integration with verified origin TLS; monitoring, backups and recovery.
 
 Documentation distinguishes **historical setup**, **observed results** and **planned tasks**. Do not interpret screenshots of an OCI creation form as proof of an applied resource.

@@ -1,0 +1,13 @@
+# Never commit credentials or exported TLS material.
+*.key
+*.pem
+*.p12
+*.pfx
+*.jks
+*.kubeconfig
+*.crt
+*.p8
+**/*-tls-secret.yaml
+**/*-secret-values.yaml
+**/secrets/*.yaml
+# .gitignore is defense in depth; review 'git status' and staged diffs.
