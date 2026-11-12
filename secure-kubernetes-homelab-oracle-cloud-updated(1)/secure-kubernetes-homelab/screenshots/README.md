@@ -19,3 +19,16 @@ Only **sanitized** terminal/console screenshots may be published. Original scree
 | `04-cert-files-ls-redacted.png` | `root:root` ownership and `-rw-------` mode | Not uploaded |
 
 The commands, observed results, and security caveats are fully recorded in [Phase 6A documentation](../docs/06-https-tls/phase-6a-certificate.md). This index intentionally does **not** link to nonexistent images or claim they have been committed.
+
+## Phase 6B/6C screenshot evidence — prepared separately, not uploaded here
+
+| Evidence | Outcome | Repository binary |
+| --- | --- | --- |
+| 6B Secret creation | Created `nginx-tailscale-tls` | Not uploaded |
+| 6B Secret namespace verification | `kubernetes.io/tls`, DATA 2 | Not uploaded |
+| 6B HTTPS Ingress creation | `nginx-https-ingress` created | Not uploaded |
+| 6B Ingress list | Both HTTP and HTTPS Ingress present | Not uploaded |
+| 6B Ingress description | Correct Secret, Traefik, host and NGINX backend | Not uploaded |
+| 6C verbose curl | TLS 1.3, matching certificate/chain, HTTP/2 200 NGINX | Not uploaded |
+
+Screenshots contain full hostname and network IPs in originals; redact identifying prompts, real `.ts.net` domain and private/Tailscale IP addresses before sharing. The 6C screenshot is **from the OCI VM itself, not the laptop**. Sanitized transcripts are in [6B](../docs/06-https-tls/phase-6b-traefik-https.md) and [6C](../docs/06-https-tls/phase-6c-validation.md).

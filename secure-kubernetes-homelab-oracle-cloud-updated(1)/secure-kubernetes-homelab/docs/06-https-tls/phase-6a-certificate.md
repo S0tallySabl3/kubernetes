@@ -2,7 +2,7 @@
 
 **Project:** Secure Kubernetes Webserver — Oracle Cloud Infrastructure  
 **Evidence date:** 2026-11-11  
-**Status:** **Phase 6A verified.** Traefik HTTPS configuration (6B) and client TLS validation (6C) have **not** yet been deployed or verified.
+**Status at certificate issuance:** Phase 6A verified. **Later updates:** Phase 6B is now configured and 6C TLS/NGINX HTTPS tested on the OCI VM. See [6B](phase-6b-traefik-https.md) and [6C](phase-6c-validation.md).
 
 ## Purpose and trust boundaries
 
@@ -19,7 +19,7 @@ flowchart TD
   NAT --> Internet((Internet))
 ```
 
-**Not yet active:** No claim is made here that Traefik serves HTTPS, that a browser trusts the live endpoint, or that an independent external exposure audit has passed. Tailscale Funnel must remain disabled.
+**Historical note (at Phase 6A only):** Traefik HTTPS was not yet serving. Later 6B/6C evidence verifies it from the OCI VM, but independent laptop access and public exposure review remain pending. Tailscale Funnel must remain disabled.
 
 ## Certificate generation — observed success
 
@@ -110,6 +110,6 @@ See [screenshot evidence index](../../screenshots/README.md) for the repository'
 - **OCI:** Retain the private networking/NAT design. A successful certificate request is not proof of no external exposure; that requires a separate exposure review.
 - **Cloudflare (future):** Cloudflare Tunnel, CDN, and WAF are **not deployed**. Select and verify origin certificate trust and SNI for the future public/origin hostname. Do not permanently disable TLS verification.
 
-## Next checkpoint — Phase 6B
+## Later deployment status
 
-Create a TLS Secret in the **`webserver`** namespace from the existing cert/key files and update the **existing** Traefik Ingress to use port 443 and the matching FQDN while continuing to route to `nginx-service:80`. Preserve the running workloads, and verify TLS endpoints before marking 6B complete. Do **not** commit a Secret YAML containing `tls.crt` or `tls.key`.
+Phase 6B used a new **separate HTTPS Ingress** while retaining the existing HTTP Ingress. See [Phase 6B](phase-6b-traefik-https.md) and the partial [Phase 6C](phase-6c-validation.md) results. Do not commit `tls.crt`, `tls.key` or Kubernetes Secret data.

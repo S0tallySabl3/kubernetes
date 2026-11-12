@@ -7,7 +7,8 @@ flowchart LR
   Admin[Ubuntu admin workstation] <-->|Tailscale VPN + SSH| Server[OCI Ubuntu ARM64 VM]
   Server --> K3s[k3s single-node cluster]
   K3s --> Ingress[Traefik controller, running]
-  Ingress -->|HTTP route verified| Web[NGINX Service and Pod]
+  Secret[webserver TLS Secret] --> Ingress
+  Ingress -->|HTTPS verified on OCI VM, HTTP to backend| Web[NGINX Service and Pod]
   Server --> NAT[OCI NAT Gateway]
   NAT --> Internet((Internet: outbound only))
   Desktop[Windows desktop] <-->|Tailscale, verified earlier| Admin
@@ -26,7 +27,9 @@ The original VCN (`10.20.0.0/16`) and subnet (`10.20.1.0/24`) screenshots show a
 - Traefik controller/pods and service running (observed).
 - NGINX Service and pod running; Traefik-selected Ingress and HTTP 200 routing confirmed on 2026-11-10.
 - Tailscale certificate for current `.ts.net` hostname **issued 2026-11-11** and stored with root-only access.
-- Traefik TLS termination, client-side HTTPS handshake and independent public exposure audit **not yet verified**.
+- `webserver/nginx-tailscale-tls` and `nginx-https-ingress` deployed and verified via kubectl on 2026-11-11; old HTTP Ingress retained.
+- TLS 1.3 certificate chain/SAN validation and HTTP/2 200 from NGINX observed on 2026-11-12, **from OCI VM only**.
+- Remote laptop access, public exposure audit and automatic certificate/Secret renewal are pending.
 
 ## Security boundaries
 
@@ -38,4 +41,4 @@ The original VCN (`10.20.0.0/16`) and subnet (`10.20.1.0/24`) screenshots show a
 
 ## Next architecture checkpoint
 
-Phase 6B: configure the existing Traefik controller with the issued TLS certificate via a Kubernetes TLS Secret and host-specific Ingress. Phase 6C: verify certificate trust, live HTTPS routing from an authorized tailnet client and exposure boundaries. Cloudflare Tunnel is a future separately verified phase.
+Verify the HTTPS endpoint **from the separate Tailscale-connected laptop**, and independently verify public isolation/Funnel state. Phase 6B is complete and 6C is partially verified. Future Cloudflare Tunnel must validate origin TLS hostname/SNI and trust.
