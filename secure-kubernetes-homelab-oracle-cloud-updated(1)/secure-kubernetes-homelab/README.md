@@ -2,19 +2,19 @@
 
 Security-focused infrastructure lab migrated from local Windows/Ubuntu systems to an Oracle Cloud Infrastructure (OCI) VM. The aim is a **privately administered Kubernetes webserver** with reproducible verification and a transparent record of changes.
 
-> **Current state (2026-11-12):** Private OCI Ubuntu VM and k3s with Tailscale administration and working Traefik → NGINX HTTP routing. **Phase 6A:** Tailscale certificate issued. **Phase 6B:** Kubernetes TLS Secret and separate Traefik `websecure` Ingress configured, keeping the existing HTTP Ingress. **Phase 6C:** trusted TLS 1.3 handshake and HTTP/2 200 from NGINX proven **from the OCI VM itself**; still requires separate-laptop test and independent internet-exposure review.
+> **Current documented state (2026-11-13):** Phase 6 private HTTPS deployed: Let's Encrypt certificate from Tailscale → Kubernetes TLS Secret → Traefik HTTPS Ingress → NGINX. After clearing a stale Tailscale Serve proxy, a distinct Windows tailnet client successfully connected via HTTPS; its browser displayed **Connection Is Encrypted** and Windows cURL returned **HTTP/1.1 200 OK**. The independent public-exposure audit and certificate/Secret renewal automation remain outstanding.
 
 ## Current topology
 
 ```mermaid
 flowchart LR
-  Laptop[Authorized tailnet laptop] <-->|Tailscale VPN| VM[OCI Ubuntu VM / k3s]
-  VM --> Traefik[Traefik websecure - TLS verified from VM]
-  TLS[TLS Secret in webserver] --> Traefik
-  Traefik -->|HTTP| Service[NGINX Service :80]
-  Service --> NGINX[NGINX pod]
-  HTTP[Existing HTTP Ingress preserved] --> Service
-  VM -->|Outbound| NAT[OCI NAT Gateway]
+  Windows[Windows tailnet client] -->|Tailscale HTTPS 443 - verified| VM[OCI Ubuntu VM / K3s]
+  VM --> Traefik[Traefik TLS termination]
+  TLS[Kubernetes TLS Secret] --> Traefik
+  Traefik -->|HTTP 80| S[NGINX ClusterIP Service]
+  S --> N[NGINX Pod]
+  Original[Original HTTP Ingress remains] --> S
+  VM -->|Outbound only| NAT[OCI NAT Gateway]
   NAT --> Internet((Internet))
 ```
 
@@ -35,10 +35,8 @@ The NAT Gateway permits outbound connections but does **not** accept unsolicited
 | NGINX pod and Service | Verified Running / ClusterIP | 2026-11-09 all-pods and all-services inventory |
 | HTTP access to NGINX via tailnet IP | Verified | 2026-11-09 `curl -I` returned HTTP 200 and NGINX server header |
 | Traefik-to-NGINX routing | Verified | 2026-11-10 in-cluster curl to Traefik Service returned NGINX HTTP 200 |
-| Tailscale hostname certificate (Phase 6A) | **Verified issued and protected** | 2026-11-11 CLI, OpenSSL metadata and `ls -l` |
-| Phase 6B — TLS Secret and Traefik HTTPS Ingress | **Verified configuration** | 2026-11-11 Secret, Ingress and backend metadata |
-| Phase 6C — Live TLS, hostname, HTTP/2 NGINX | **Verified from OCI VM** | 2026-11-12 `curl -vI`, CA/SAN verification and HTTP 200 |
-| Phase 6C — external laptop and public exposure | Pending | Separate tailnet client and no-public-ingress audit still required |
+| **Phase 6 — private HTTPS/TLS** | **Verified from Windows client** | TLS certificate, Kubernetes Secret, Traefik HTTPS Ingress, Windows browser encrypted and `curl.exe` HTTP 200; [evidence](docs/06-https-tls/README.md) |
+| Independent external exposure audit and TLS renewal automation | Pending | Explicitly separate from working private HTTPS |
 | Monitoring, backups and security review | Pending | — |
 
 ## Reusable manifests
@@ -56,25 +54,22 @@ The NAT Gateway permits outbound connections but does **not** accept unsolicited
 - [k3s installation and verification](docs/03-kubernetes/README.md)
 - [Traefik and ingress status](docs/04-reverse-proxy/README.md)
 - [Phase 5 — workload and Ingress verification](docs/04-reverse-proxy/phase-5-verification.md)
-- [Phase 6A — Tailscale HTTPS certificate and verification](docs/06-https-tls/phase-6a-certificate.md)
-- [Phase 6B — Kubernetes Secret and Traefik HTTPS Ingress](docs/06-https-tls/phase-6b-traefik-https.md)
-- [Phase 6C — HTTPS/TLS handshake and backend verification](docs/06-https-tls/phase-6c-validation.md)
+- [Phase 6 — HTTPS/TLS deployment, verification and security notes](docs/06-https-tls/README.md)
 - [Monitoring and recovery (planned)](docs/07-monitoring/README.md)
 - [Evidence inventory and publication guidelines](screenshots/README.md)
 - [Change history](CHANGELOG.md)
 
 ## Screenshot evidence
 
-Previously committed proof remains under [screenshots/01-tailscale](screenshots/01-tailscale) and [screenshots/02-oracle-cloud](screenshots/02-oracle-cloud). Phase 6A–6C screenshot evidence has been provided and can be retained as separate redacted archives; the newer binary screenshots are not committed in this documentation update. See [the evidence index](screenshots/README.md) for status.
+Previously committed proof remains under [screenshots/01-tailscale](screenshots/01-tailscale) and [screenshots/02-oracle-cloud](screenshots/02-oracle-cloud). Phase 6 redacted terminal/browser screenshots are committed under [screenshots/06-https-tls](screenshots/06-https-tls/README.md), with an inventory and links. See [the evidence index](screenshots/README.md).
 
 **Publishing policy:** No private SSH keys, Tailscale authentication keys, identity-bearing hostnames, unredacted IP details, cloud OCIDs, account emails, or unredacted originals. Revoke any previously exposed authentication key even if its screenshot is later redacted.
 
 ## Roadmap
 
-1. **6A complete:** root-protected Tailscale TLS certificate issued.
-2. **6B complete:** namespace TLS Secret and separate host-specific Traefik HTTPS Ingress configured.
-3. **6C partial:** trusted HTTPS and NGINX HTTP/2 200 verified on OCI VM. Test from the separate laptop and audit outside exposure/Funnel independently.
-4. **6D in progress:** technical documentation updated; sanitized screenshot archives separate.
-5. Later: automate certificate/Secret renewal, add Cloudflare Tunnel/CDN/WAF with verified origin TLS, monitor and back up workloads.
+1. **Phase 6 complete for private HTTPS:** Certificate, Kubernetes Secret, Traefik ingress, client TLS verification, Serve cleanup and documented evidence.
+2. **Security follow-up:** Independently verify no unintended OCI public exposure and evaluate HTTP-to-HTTPS redirect.
+3. **Operations follow-up:** Automate certificate and Secret renewal ahead of **2027-02-09** expiry.
+4. **Future:** Deploy Cloudflare Tunnel/CDN/WAF with explicitly verified origin TLS trust, then monitoring and recovery.
 
 Documentation distinguishes **historical setup**, **observed results** and **planned tasks**. Do not interpret screenshots of an OCI creation form as proof of an applied resource.

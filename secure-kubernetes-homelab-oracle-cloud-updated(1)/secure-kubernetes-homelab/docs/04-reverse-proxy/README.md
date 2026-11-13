@@ -49,3 +49,7 @@ Keep traffic inside Tailscale for the current phase. Disable Tailscale Funnel un
 ## 2026-11-10 — Routing verification passed
 
 A temporary in-cluster curl pod requested `http://traefik.kube-system.svc.cluster.local/` and received `HTTP/1.1 200 OK`, `Content-Type: text/html`, `Server: nginx/1.30.6`. This directly verifies Traefik-to-NGINX routing through the existing Ingress. See [Phase 5 verification](phase-5-verification.md) for full evidence, caveats, and diagnostic-pod cleanup. Private DNS, TLS and OCI exposure checks remain future steps.
+
+## Follow-up — Phase 6 HTTPS/TLS verified
+
+A separate TLS-enabled Traefik Ingress was added without modifying the original HTTP Ingress. The Windows Tailscale browser later confirmed an encrypted connection and the NGINX page, with an independent Windows cURL HTTP 200 result. A stale Tailscale Serve proxy was cleared. See the [unified Phase 6 runbook](../06-https-tls/README.md). Public exposure audit remains pending.

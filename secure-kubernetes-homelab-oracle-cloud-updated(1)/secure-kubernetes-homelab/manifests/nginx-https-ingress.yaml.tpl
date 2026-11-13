@@ -1,5 +1,5 @@
-# TEMPLATE ONLY. Use the Phase 6B heredoc to expand TS_HOST before apply.
-# Never commit your real hostname or TLS Secret data.
+# HTTPS Ingress template ONLY; expand TS_HOST before applying.
+# See docs/06-https-tls/README.md for the verified command and safeguards.
 apiVersion: networking.k8s.io/v1
 kind: Ingress
 metadata:

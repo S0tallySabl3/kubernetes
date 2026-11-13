@@ -8,10 +8,10 @@ flowchart LR
   Server --> K3s[k3s single-node cluster]
   K3s --> Ingress[Traefik controller, running]
   Secret[webserver TLS Secret] --> Ingress
-  Ingress -->|HTTPS verified on OCI VM, HTTP to backend| Web[NGINX Service and Pod]
+  Ingress -->|HTTP to backend, HTTPS tested from Windows| Web[NGINX Service and Pod]
   Server --> NAT[OCI NAT Gateway]
   NAT --> Internet((Internet: outbound only))
-  Desktop[Windows desktop] <-->|Tailscale, verified earlier| Admin
+  Desktop[Windows desktop] -->|Private HTTPS over Tailscale verified| Ingress
 ```
 
 The initial OCI connectivity path used a temporary **Internet Gateway** and key-based public SSH. The design was migrated to **Tailscale-based SSH** and **NAT for outbound connectivity**. The user subsequently confirmed successful remote access after the gateway transition and removal of the Internet Gateway. The NAT Gateway does not permit unsolicited inbound connections.
@@ -29,7 +29,8 @@ The original VCN (`10.20.0.0/16`) and subnet (`10.20.1.0/24`) screenshots show a
 - Tailscale certificate for current `.ts.net` hostname **issued 2026-11-11** and stored with root-only access.
 - `webserver/nginx-tailscale-tls` and `nginx-https-ingress` deployed and verified via kubectl on 2026-11-11; old HTTP Ingress retained.
 - TLS 1.3 certificate chain/SAN validation and HTTP/2 200 from NGINX observed on 2026-11-12, **from OCI VM only**.
-- Remote laptop access, public exposure audit and automatic certificate/Secret renewal are pending.
+- **2026-11-12:** After the obsolete Tailscale Serve HTTPS proxy was reset, Windows directly connected via HTTPS over Tailscale, browser displayed **Connection Is Encrypted**, and Windows `curl.exe -vI` returned `HTTP/1.1 200 OK` from NGINX.
+- Independent internet exposure audit, HTTP-to-HTTPS policy and automated certificate/Secret renewal are still pending.
 
 ## Security boundaries
 
@@ -41,4 +42,4 @@ The original VCN (`10.20.0.0/16`) and subnet (`10.20.1.0/24`) screenshots show a
 
 ## Next architecture checkpoint
 
-Verify the HTTPS endpoint **from the separate Tailscale-connected laptop**, and independently verify public isolation/Funnel state. Phase 6B is complete and 6C is partially verified. Future Cloudflare Tunnel must validate origin TLS hostname/SNI and trust.
+Private HTTPS is demonstrated from Windows. [Phase 6](06-https-tls/README.md) documents the deployment and Serve collision. Next independently audit OCI public exposure and set up certificate/Secret renewal. Future Cloudflare Tunnel must verify origin hostname/SNI and trust.

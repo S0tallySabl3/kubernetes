@@ -1,27 +1,12 @@
 # Change log
 
-## 2026-11-12 — Phase 6C: HTTPS verified from OCI VM
+## 2026-11-13 — Consolidate Phase 6 private HTTPS/TLS and redacted evidence
 
-- `curl -vI` successfully negotiated TLS 1.3 with Let's Encrypt E2, verified chain/SAN, ALPN h2, and `HTTP/2 200` from `nginx/1.30.6`.
-- Command ran at `ubuntu@k8s-vnic`, with matching source/target tailnet IP. This was **not** the separate Ubuntu laptop; off-node reachability is pending.
-- No independent public exposure or Funnel review was performed. Phase 6C remains partially complete.
-- See [Phase 6C verification](docs/06-https-tls/phase-6c-validation.md).
-
-## 2026-11-11 — Phase 6B: TLS Secret and HTTPS Ingress created
-
-- Created `webserver/nginx-tailscale-tls` from protected files; verified `kubernetes.io/tls`, `DATA 2`.
-- Created `webserver/nginx-https-ingress` with Traefik `websecure`, TLS enabled, existing tailnet hostname and `nginx-service:80` backend.
-- Verified via Ingress inventory and description that original `nginx-ingress` remains, with HTTPS resource and endpoint present.
-- Added sanitized [Phase 6B documentation](docs/06-https-tls/phase-6b-traefik-https.md) and an Ingress YAML template (no key/Secret bytes).
-
-## 2026-11-11 — Phase 6A certificate issuance verified
-
-- Generated a Let's Encrypt E2 certificate via `sudo tailscale cert` for the existing `.ts.net` machine hostname; recorded only redacted hostname details.
-- Confirmed certificate file and private key were written to `/etc/tailscale/certs/`, owner `root:root` and permission mode `600`.
-- Recorded X.509 validity window (2026-11-11 14:14:34 UTC through 2027-02-09 14:14:33 UTC) and matching SAN.
-- Prepared four terminal screenshots with identifying prompts and hostname redacted; binaries remain available separately and are not committed with the text documentation.
-- Added [Phase 6A notes](docs/06-https-tls/phase-6a-certificate.md) and aligned the existing monitoring documentation with Phase 7 numbering.
-- **Not yet done:** Kubernetes TLS Secret, HTTPS Ingress, TLS client handshake, automated renewal, independent origin exposure audit, or Cloudflare deployment.
+- Consolidated former Phase 6A–6D notes into [one Phase 6 document](docs/06-https-tls/README.md), with verified commands, topology, security caveats and future Cloudflare plan.
+- Confirmed Windows HTTPS success on 2026-11-12 after clearing a stale Tailscale Serve mapping (`127.0.0.1:8080`) using `tailscale serve reset`. A Windows browser reported **Connection Is Encrypted** and `curl.exe -vI` returned `HTTP/1.1 200 OK` from `nginx/1.30.6`.
+- Published ten authentic, **redacted** certificate, Kubernetes and browser screenshots. No private keys, TLS Secret data, full tailnet hostnames, prompt identities or client/server IPs were committed.
+- Three certificate SHA-256 fingerprints (on-host file, Kubernetes TLS Secret and Traefik-served certificate) matched exactly in operator output; raw fingerprint omitted from documentation.
+- The public-internet exposure audit, an HTTP redirect policy, and automated certificate/Secret renewal remain pending.
 
 ## 2026-11-10 — Diagnostic test pod cleanup confirmed
 
