@@ -1,8 +1,17 @@
-# Secure Kubernetes Webserver Lab — Oracle Cloud, Tailscale and k3s
+# Kubernetes Webserver Infrastructure Lab — Oracle Cloud, Tailscale and K3s
 
-Security-focused infrastructure lab migrated from local Windows/Ubuntu systems to an Oracle Cloud Infrastructure (OCI) VM. The aim is a **privately administered Kubernetes webserver** with reproducible verification and a transparent record of changes.
+Hands-on infrastructure lab deployed on Oracle Cloud Infrastructure (OCI), using Tailscale for private access, K3s for Kubernetes orchestration, Traefik for ingress routing, and NGINX as a web workload. The focus is **deploying fundamental infrastructure and applying basic, demonstrable hardening measures**, with documented configuration and verification. This is a lab demonstration, not a claim of production-grade security.
 
 > **Current documented state (2026-11-13):** Phase 6 private HTTPS deployed: Let's Encrypt certificate from Tailscale → Kubernetes TLS Secret → Traefik HTTPS Ingress → NGINX. After clearing a stale Tailscale Serve proxy, a distinct Windows tailnet client successfully connected via HTTPS; its browser displayed **Connection Is Encrypted** and Windows cURL returned **HTTP/1.1 200 OK**. The independent public-exposure audit and certificate/Secret renewal automation remain outstanding.
+
+## Verified foundational security measures
+
+- Migrated administration from temporary public SSH bootstrap to private SSH access over Tailscale.
+- Configured outbound access through an OCI NAT Gateway and removed the bootstrap Internet Gateway (as recorded in the migration tests).
+- Terminated client HTTPS at Traefik using a trusted certificate stored as a Kubernetes TLS Secret, with restricted certificate key-file permissions on the VM.
+- Kept credential material and identifying infrastructure details out of the documented manifests and published evidence wherever verified.
+
+These measures do **not** establish that all public exposure is absent or that least-privilege policy, host hardening, RBAC, monitoring, and key rotation have been comprehensively audited.
 
 ## Current topology
 
@@ -65,11 +74,8 @@ Previously committed proof remains under [screenshots/01-tailscale](screenshots/
 
 **Publishing policy:** No private SSH keys, Tailscale authentication keys, identity-bearing hostnames, unredacted IP details, cloud OCIDs, account emails, or unredacted originals. Revoke any previously exposed authentication key even if its screenshot is later redacted.
 
-## Roadmap
+## Scope and outstanding validation
 
-1. **Phase 6 complete for private HTTPS:** Certificate, Kubernetes Secret, Traefik ingress, client TLS verification, Serve cleanup and documented evidence.
-2. **Security follow-up:** Independently verify no unintended OCI public exposure and evaluate HTTP-to-HTTPS redirect.
-3. **Operations follow-up:** Automate certificate and Secret renewal ahead of **2027-02-09** expiry.
-4. **Future:** Deploy Cloudflare Tunnel/CDN/WAF with explicitly verified origin TLS trust, then monitoring and recovery.
+The infrastructure deployment and private HTTPS verification are complete for this documented lab milestone. Before treating this deployment as production-ready, independently audit OCI public exposure and access rules, decide whether to enforce HTTPS-only routing, and automate certificate/Kubernetes Secret renewal before **2027-02-09**. Other security and operational controls are not claimed as complete.
 
 Documentation distinguishes **historical setup**, **observed results** and **planned tasks**. Do not interpret screenshots of an OCI creation form as proof of an applied resource.
