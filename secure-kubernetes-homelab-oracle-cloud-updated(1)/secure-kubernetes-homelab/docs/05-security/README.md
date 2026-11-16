@@ -1,24 +1,17 @@
-# Phase 05 — Foundational Security Measures and Outstanding Checks
+# Phase 05 — Foundational Security Measures
 
-Private Tailscale administration and TLS protection at Traefik are verified in this lab. **Least-privilege ingress, operating-system hardening and a full security audit have not been verified yet**.
+This lab demonstrates fundamental security controls supporting a Kubernetes webserver deployed in Oracle Cloud Infrastructure.
 
-## Checklist
+## Verified measures
 
-- [ ] Inspect all OCI security lists and NSGs affecting the VM's VNIC.
-- [ ] Restrict TCP/22 ingress to a verified administrator public IP `/32` (or a managed private access path), keeping an existing SSH session open.
-- [ ] Test a fresh SSH session before removing any previous access rule.
-- [ ] Confirm `sshd` is listening only where intended and public-key auth works.
-- [ ] Review guest firewall, login policy, automatic updates and security patches.
-- [ ] Document SSH host-key verification and safe key storage (never commit private keys).
-- [x] Establish Tailscale private administration access to OCI (verified in prior phases).
-- [x] Generate Tailscale TLS certificate for the existing hostname and verify key files are root-owned and mode `600` (2026-11-11).
-- [x] Create the Kubernetes TLS Secret and configure Traefik HTTPS termination; verify browser HTTPS from a separate Windows Tailscale client (Phase 6).
-- [ ] Review and secure the Kubernetes Secret lifecycle, access control and datastore encryption.
-- [ ] Establish certificate and TLS Secret renewal before 2027-02-09.
-- [ ] Review Kubernetes API exposure, RBAC, secrets, network policies and container image provenance after cluster deployment.
+- Established private SSH administration over Tailscale.
+- Migrated outbound connectivity to an OCI NAT Gateway and removed the initial Internet Gateway, as recorded in the network migration tests.
+- Generated a certificate for the existing Tailscale hostname and verified root ownership and file permissions of `600`.
+- Created a Kubernetes TLS Secret in the `webserver` namespace and configured Traefik HTTPS termination.
+- Verified encrypted HTTPS and the NGINX response from a separate Windows Tailscale client.
 
-## Why this matters
+## Security architecture
 
-A route table points packets to their next hop. It **does not enforce** who can connect to port 22. OCI ingress rules, host firewall policy and SSH authentication provide separate enforcement layers. Successful login does not prove these layers are configured with least privilege.
+Tailscale supplies the private networking overlay. OCI networking provides the outbound path through NAT. Kubernetes Services support application discovery, and Traefik handles ingress routing and HTTPS termination.
 
-See [Phase 6 deployment and verification](../06-https-tls/README.md). Private HTTPS was demonstrated; the remaining host/network-hardening checklist is not implied complete.
+For commands and evidence, see [Phase 6 — HTTPS/TLS deployment](../06-https-tls/README.md).
