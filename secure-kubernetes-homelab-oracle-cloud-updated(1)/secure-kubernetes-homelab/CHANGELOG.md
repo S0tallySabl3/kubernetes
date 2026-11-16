@@ -2,7 +2,7 @@
 
 ## 2026-11-13 — Consolidate Phase 6 private HTTPS/TLS and redacted evidence
 
-- Consolidated former Phase 6A–6D notes into [one Phase 6 document](docs/06-https-tls/README.md), with verified commands, topology, security caveats and future Cloudflare plan.
+- Consolidated former Phase 6A–6D notes into [one Phase 6 document](docs/06-https-tls/README.md), with verified commands, topology and clearly documented security limitations.
 - Confirmed Windows HTTPS success on 2026-11-12 after clearing a stale Tailscale Serve mapping (`127.0.0.1:8080`) using `tailscale serve reset`. A Windows browser reported **Connection Is Encrypted** and `curl.exe -vI` returned `HTTP/1.1 200 OK` from `nginx/1.30.6`.
 - Published ten authentic, **redacted** certificate, Kubernetes and browser screenshots. No private keys, TLS Secret data, full tailnet hostnames, prompt identities or client/server IPs were committed.
 - Three certificate SHA-256 fingerprints (on-host file, Kubernetes TLS Secret and Traefik-served certificate) matched exactly in operator output; raw fingerprint omitted from documentation.
