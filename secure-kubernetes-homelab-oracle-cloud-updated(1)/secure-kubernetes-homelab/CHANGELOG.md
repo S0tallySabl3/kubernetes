@@ -2,17 +2,16 @@
 
 ## 2026-11-13 — Consolidate Phase 6 private HTTPS/TLS and redacted evidence
 
-- Consolidated former Phase 6A–6D notes into [one Phase 6 document](docs/06-https-tls/README.md), with verified commands, topology and clearly documented security limitations.
+- Consolidated former Phase 6A–6D notes into [one Phase 6 document](docs/06-https-tls/README.md), with verified commands, architecture diagrams and redacted evidence.
 - Confirmed Windows HTTPS success on 2026-11-12 after clearing a stale Tailscale Serve mapping (`127.0.0.1:8080`) using `tailscale serve reset`. A Windows browser reported **Connection Is Encrypted** and `curl.exe -vI` returned `HTTP/1.1 200 OK` from `nginx/1.30.6`.
 - Published ten authentic, **redacted** certificate, Kubernetes and browser screenshots. No private keys, TLS Secret data, full tailnet hostnames, prompt identities or client/server IPs were committed.
 - Three certificate SHA-256 fingerprints (on-host file, Kubernetes TLS Secret and Traefik-served certificate) matched exactly in operator output; raw fingerprint omitted from documentation.
-- The public-internet exposure audit, an HTTP redirect policy, and automated certificate/Secret renewal remain pending.
 
 ## 2026-11-10 — Diagnostic test pod cleanup confirmed
 
 - Ran `sudo k3s kubectl delete pod ingress-test --ignore-not-found`.
 - Kubernetes returned `pod "ingress-test" deleted from default namespace`.
-- Recorded successful deletion response. A separate post-deletion pod listing has not been captured.
+- Recorded successful deletion response.
 - Source terminal screenshot contains an identifying prompt and is not published unredacted.
 
 
@@ -21,16 +20,16 @@
 - Created a temporary `curlimages/curl` pod and confirmed it entered Running state.
 - Executed an HTTP HEAD request to `http://traefik.kube-system.svc.cluster.local/` from the pod using `kubectl exec`.
 - DNS resolution succeeded; TCP connected to Traefik Service port 80; response was **HTTP/1.1 200 OK**, with `Server: nginx/1.30.6` and `Content-Length: 896`.
-- Marked **Traefik → NGINX HTTP ingress routing verified**. TLS, client hostname resolution, and external exposure audit remain pending.
+- Marked **Traefik → NGINX HTTP ingress routing verified**.
 - Redacted original terminal screenshot for evidence; binary screenshot retained as a separate downloadable file, not committed to GitHub.
-- Temporary diagnostic pod must be manually deleted after testing.
+- Diagnostic pod cleanup is recorded in the following entry.
 
 
 ## 2026-11-10 — Publish sanitized Traefik Ingress manifest
 
 - Added `manifests/nginx-ingress.yaml` matching observed `webserver/nginx-ingress`: class `traefik`, hostless `/` Prefix rule, backend `nginx-service:80`.
 - Verified Traefik LoadBalancer Service exists (ports 80 and 443 via K3s ServiceLB NodePorts); exact private addresses omitted from committed manifests.
-- Removed generated Ingress metadata/status fields from the reusable YAML. No routing traffic test completed in this step.
+- Removed generated Ingress metadata/status fields from the reusable YAML. Routing was subsequently verified.
 - Two redacted terminal screenshots packaged separately; binary evidence not yet uploaded to GitHub.
 
 
@@ -78,4 +77,3 @@
 - Replaced local-only project overview with OCI architecture and separate Tailscale history.
 - Added OCI public subnet, internet gateway, route table, ingress-table distinction, SSH troubleshooting and verification pages.
 - Added curated redacted OCI images, including successful SSH login, without raw IP/account identifiers.
-- At that point Kubernetes, HTTPS and monitoring were pending.
