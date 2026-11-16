@@ -42,4 +42,4 @@ Authentic terminal and browser screenshots captured during November 11–12, 202
 
 ![Windows browser reports Connection Is Encrypted](10-windows-browser-https-encrypted.webp)
 
-The final Windows PowerShell `curl.exe -vI` output was provided as terminal text, not a screenshot; its redacted transcript is in [Phase 6](../../docs/06-https-tls/README.md). The Tailscale Serve status/reset evidence was also provided as terminal text. An independent internet exposure audit has not been performed.
+The final Windows PowerShell `curl.exe -vI` output was provided as terminal text, not a screenshot; its redacted transcript is in [Phase 6](../../docs/06-https-tls/README.md). The Tailscale Serve status/reset evidence was also provided as terminal text.
