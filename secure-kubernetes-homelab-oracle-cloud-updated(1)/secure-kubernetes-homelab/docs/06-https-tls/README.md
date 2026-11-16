@@ -214,7 +214,6 @@ An issued public-trust certificate can expose the FQDN in Certificate Transparen
 - Plan renewal **before February 9, 2027, 14:14:33 UTC**; certificate replacement on disk does **not** automatically rotate `nginx-tailscale-tls`. Update the Secret and verify the newly served certificate. No automated renewal is recorded.
 - Because HTTP still works, choose an HTTPS redirect/HTTP retirement only after confirming desired client behavior.
 - Maintain private Tailscale administrative access and keep Tailscale Funnel off. An independent OCI/public exposure audit remains separate.
-- Future Cloudflare Tunnel, CDN and WAF must use a certificate trusted for the **Cloudflare-to-origin hostname/SNI**, or explicitly configure and verify the origin server name and trust chain. Never permanently suppress certificate verification.
 
 ## 8. GitHub evidence and redaction
 
