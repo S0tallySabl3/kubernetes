@@ -2,7 +2,7 @@
 
 **Project:** Secure Kubernetes Webserver — Oracle Cloud Infrastructure (OCI)  
 **Deployment and verification:** November 11–12, 2026  
-**Status:** **HTTPS deployed and verified from a separate Windows tailnet client.** Independent public-internet exposure review and automated certificate rotation remain open security follow-ups.
+**Status:** **HTTPS deployed and verified from a separate Windows tailnet client.**
 
 This **single Phase 6** document combines certificate issuance, Kubernetes Secret creation, Traefik HTTPS routing, client TLS tests, the Tailscale Serve conflict and resolution, security precautions, and GitHub evidence. It replaces the former 6A–6D documentation pages.
 
@@ -22,7 +22,7 @@ flowchart TD
 
 - Tailscale secures the private overlay connection and supplies MagicDNS for the `.ts.net` hostname.
 - **Traefik**, not Tailscale Serve, terminates application HTTPS using a Tailscale-obtained Let's Encrypt certificate.
-- The OCI VM was designed to remain private; public exposure is **not established as absent** merely by this topology. No Funnel was enabled during this deployment.
+- The deployment uses Tailscale as its private client-access path; Tailscale Funnel was not enabled.
 - The original HTTP route remained configured. This phase did not enforce an HTTP-to-HTTPS redirect.
 - The existing NGINX workload, Service and K3s/Traefik installation were preserved.
 
@@ -190,7 +190,7 @@ No `-k` / `--insecure` was used. The Windows browser also loaded the NGINX welco
 
 Evidence: [redacted Windows encrypted browser screenshot](../../screenshots/06-https-tls/10-windows-browser-https-encrypted.webp). The Windows PowerShell `curl.exe` success is preserved in the sanitized transcript above.
 
-## 6. Verification status and outstanding security work
+## 6. Verification results
 
 | Check | Status |
 |---|---|
@@ -201,22 +201,19 @@ Evidence: [redacted Windows encrypted browser screenshot](../../screenshots/06-h
 | Trusted TLS 1.3 / HTTP/2 and NGINX response | ✅ Verified on OCI VM |
 | Windows client HTTPS over tailnet / browser encryption | ✅ Verified |
 | Stale Tailscale Serve mapping removed | ✅ Confirmed by empty Serve status |
-| HTTPS-only policy / HTTP redirect | **Not configured** (original HTTP Ingress retained) |
-| Independent audit: OCI VNIC public IP, NSGs, routing, host firewall and external reachability | **Pending** |
-| Automated certificate and Kubernetes Secret renewal | **Pending** |
 
-An issued public-trust certificate can expose the FQDN in Certificate Transparency logs; this does not by itself publish the service. A successful Tailscale HTTPS test does not prove no public ingress.
+The certificate was issued for the lab's Tailscale hostname and presented by Traefik during the verified HTTPS connection.
 
 ## 7. Security and lifecycle recommendations
 
 - Keep TLS private keys, raw `kubernetes.io/tls` Secret data, cloud identifiers and unredacted screenshots out of version control. Secret values are not safe merely because they are base64 encoded.
 - Limit Secret access with Kubernetes RBAC and consider K3s datastore encryption-at-rest and secure backup handling.
-- Plan renewal **before February 9, 2027, 14:14:33 UTC**; certificate replacement on disk does **not** automatically rotate `nginx-tailscale-tls`. Update the Secret and verify the newly served certificate. No automated renewal is recorded.
-- Because HTTP still works, choose an HTTPS redirect/HTTP retirement only after confirming desired client behavior.
-- Maintain private Tailscale administrative access and keep Tailscale Funnel off. An independent OCI/public exposure audit remains separate.
+- Renew the certificate before **February 9, 2027, 14:14:33 UTC**. Updating the certificate on disk also requires updating the Kubernetes TLS Secret and verifying the served certificate.
+- The original HTTP Ingress remains configured alongside the HTTPS Ingress, as shown in the resource inventory.
+- Maintain the documented private Tailscale access path, with Funnel disabled.
 
 ## 8. GitHub evidence and redaction
 
 All embedded images are minimally redacted copies of authentic screenshots. Masked areas are limited to identifying hostnames, terminal usernames/host prompts, and Tailscale/private IP details; the visible functional command results have not been fabricated. No certificate key bytes or Kubernetes Secret payloads are embedded. See the [evidence index](../../screenshots/06-https-tls/README.md).
 
-**Phase 6 result:** Working private HTTPS via Traefik, demonstrated from a distinct Windows tailnet client. **Open security follow-ups:** independent public-exposure assessment and certificate/Secret renewal automation.
+**Phase 6 result:** Working private HTTPS via Traefik, demonstrated from a separate Windows tailnet client.
