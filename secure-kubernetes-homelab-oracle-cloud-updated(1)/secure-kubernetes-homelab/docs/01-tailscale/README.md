@@ -32,8 +32,6 @@ tailscale ip -4
 systemctl is-active tailscaled
 ```
 
-**Screenshot reminder:** Capture a status or interface view with machine names, account identities, and addresses redacted. The existing [Linux interface screenshot](../../screenshots/01-tailscale/01-ubuntu-tailscale-interface.png) is the first evidence artifact.
-
 ### Windows
 
 Install the official Windows Tailscale client, sign in to the same tailnet, and verify its state in the application or PowerShell:
@@ -41,8 +39,6 @@ Install the official Windows Tailscale client, sign in to the same tailnet, and 
 ```powershell
 & "$env:ProgramFiles\Tailscale\tailscale.exe" status
 ```
-
-**Screenshot reminder:** Capture the client or PowerShell status if useful, removing any account emails or private identifiers.
 
 ## Verify connectivity
 
@@ -55,11 +51,7 @@ ping -c 8 <WINDOWS_TAILSCALE_IP>
 
 The OS `ping` may be blocked by Windows firewall rules even when the tailnet is functioning. Do **not** disable host firewalls simply to make a screenshot pass. The observed ICMP test from this project already succeeded with 8/8 packets.
 
-**Screenshot reminder:** Capture the terminal's actual command and summary, obscuring username and target addresses while leaving the statistics unchanged.
-
 The admin console is available at [Machines](https://login.tailscale.com/admin/machines). Check that both systems appear as connected; this has been observed in the provided capture.
-
-**Screenshot reminder:** Obscure machine names, addresses, and email addresses, but preserve `Connected` indicators and other nonsensitive evidence.
 
 ## Results
 
