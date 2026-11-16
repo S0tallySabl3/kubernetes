@@ -7,7 +7,7 @@ Provide a private administration path between an Ubuntu laptop and Windows lab d
 ## Components
 
 - **Ubuntu laptop:** Tailscale client and administration workstation.
-- **Windows desktop:** Tailscale client and future Kubernetes lab host.
+- **Windows desktop:** Tailscale client and lab workstation.
 - **Tailnet:** Private overlay used to connect the two machines.
 
 ## Reproducing the installation
@@ -67,12 +67,10 @@ See [verification.md](verification.md) for the table of original measurements an
 | `tailscale ping` succeeds but OS `ping` fails | Check ICMP firewall policy; don't disable the host firewall wholesale |
 | Future VM or Kubernetes node is unreachable | Its routing and identity are separate; being on the Windows host does not automatically add workloads to the tailnet |
 
-## Security baseline and future work
+## Security practices
 
 - Keep host firewalls enabled.
 - Protect identity-provider accounts using MFA.
 - Review Tailscale access policies/grants before exposing admin services.
 - Avoid public port-forwarding of SSH, RDP, or the Kubernetes API.
-- Document and test actual remote management authorization in a later milestone.
 
-This milestone **does not** claim remote desktop/SSH, Kubernetes, ingress, TLS, or cloud deployment are finished.
