@@ -1,6 +1,6 @@
-# Phase 05 — Security Hardening (planned)
+# Phase 05 — Foundational Security Measures and Outstanding Checks
 
-SSH login is confirmed, but **least-privilege ingress and OS hardening are not verified yet**.
+Private Tailscale administration and TLS protection at Traefik are verified in this lab. **Least-privilege ingress, operating-system hardening and a full security audit have not been verified yet**.
 
 ## Checklist
 
