@@ -49,7 +49,7 @@ The captured Tailscale Machines page shows the **Windows desktop** and **Ubuntu 
 - [x] Eight ICMP packets transmitted and received with no loss
 - [x] Screenshots redacted from original source images
 - [ ] Native `tailscale ping` evidence captured (optional additional network-path check)
-- [ ] Access policies/grants reviewed and documented
+- [x] Access policies/grants reviewed and documented in the [November 16 hardening record](access-control-hardening.md)
 - [ ] Remote administration service (SSH/RDP) tested with least privilege
 
 ## Repeatable checks

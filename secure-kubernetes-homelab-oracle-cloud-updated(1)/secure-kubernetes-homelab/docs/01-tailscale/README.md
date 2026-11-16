@@ -67,6 +67,10 @@ See [verification.md](verification.md) for the table of original measurements an
 | `tailscale ping` succeeds but OS `ping` fails | Check ICMP firewall policy; don't disable the host firewall wholesale |
 | Future VM or Kubernetes node is unreachable | Its routing and identity are separate; being on the Windows host does not automatically add workloads to the tailnet |
 
+## Access-control hardening (November 16, 2026)
+
+A later milestone replaced the initial wildcard general grant with a least-privilege rule for the Windows and Ubuntu clients to access the tagged webserver on TCP 22 and 443. See [the access-control hardening and validation record](access-control-hardening.md).
+
 ## Security practices
 
 - Keep host firewalls enabled.

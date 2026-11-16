@@ -1,5 +1,14 @@
 # Change log
 
+## 2026-11-16 — Tailscale Zero Trust access-control hardening
+
+- Replaced the Tailscale general allow-all grant with one restricted to two designated client devices, the `tag:cloud-server` destination, and TCP ports 22 and 443.
+- Verified the wildcard general access rule no longer appeared in the Policies interface.
+- Confirmed the HTTPS webserver continued to load after the change.
+- Observed `Test-NetConnection` over the Tailscale interface: port 6443 returned `TcpTestSucceeded: False` while basic ping succeeded.
+- Recorded the successful key-based SSH login obtained during the policy transition; did not treat a separate VPN-interface failure as definitive grant enforcement.
+- Added [the hardening rationale and sanitized validation transcript](docs/01-tailscale/access-control-hardening.md). No device IPs, accounts, or full tailnet hostnames were committed.
+
 ## 2026-11-13 — Consolidate Phase 6 private HTTPS/TLS and redacted evidence
 
 - Consolidated former Phase 6A–6D notes into [one Phase 6 document](docs/06-https-tls/README.md), with verified commands, architecture diagrams and redacted evidence.
