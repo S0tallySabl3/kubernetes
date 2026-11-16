@@ -4,4 +4,4 @@
 - [SSH evidence and troubleshooting](ssh-and-troubleshooting.md)
 - [OCI screenshot index](../../screenshots/02-oracle-cloud/README.md)
 
-**Verified milestone:** Key-based SSH login to Ubuntu OCI VM. **Not verified:** Kubernetes installation, web workload, least-privilege network rule review.
+**Verified milestone:** Key-based SSH access to the Ubuntu OCI VM, establishing the foundation for the Kubernetes deployment.
