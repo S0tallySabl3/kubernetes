@@ -42,4 +42,4 @@ The original VCN (`10.20.0.0/16`) and subnet (`10.20.1.0/24`) screenshots show a
 
 ## Next architecture checkpoint
 
-Private HTTPS is demonstrated from Windows. [Phase 6](06-https-tls/README.md) documents the deployment and Serve collision. Next independently audit OCI public exposure and set up certificate/Secret renewal. Future Cloudflare Tunnel must verify origin hostname/SNI and trust.
+Private HTTPS is demonstrated from Windows. [Phase 6](06-https-tls/README.md) documents the deployment and resolution of the Tailscale Serve collision. The next security checks are an independent audit of OCI public exposure and a reliable certificate/Secret renewal process.
