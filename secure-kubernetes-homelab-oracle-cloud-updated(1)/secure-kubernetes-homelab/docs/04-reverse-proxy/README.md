@@ -20,7 +20,7 @@ ingress.networking.k8s.io/nginx-ingress created
 
 ## 2026-11-09 follow-up inventory
 
-A newer namespace-wide inspection confirms that `nginx-ingress` belongs to namespace `webserver` and **selects IngressClass `traefik`**. The `nginx-service` is a ClusterIP Service listening on TCP/80; the NGINX pod is healthy (1/1 Ready, no restarts). This resolves the earlier potential class mismatch, but does not yet prove a request successfully traverses Traefik to the backend. See [Phase 5 verification](phase-5-verification.md).
+A newer namespace-wide inspection confirms that `nginx-ingress` belongs to namespace `webserver` and **selects IngressClass `traefik`**. The `nginx-service` is a ClusterIP Service listening on TCP/80; the NGINX pod is healthy (1/1 Ready, no restarts). The ingress route was subsequently validated with a controlled Traefik-to-NGINX HTTP request. See [Phase 5 verification](phase-5-verification.md).
 
 ## Recheck commands
 
@@ -36,20 +36,12 @@ If the manifest is intended for the existing Traefik controller, explicitly set 
 
 ## Exposure policy
 
-Keep traffic inside Tailscale for the current phase. Disable Tailscale Funnel unless a public endpoint is deliberately required and reviewed. A Service of type `LoadBalancer` is not automatically a publicly reachable cloud load balancer. Do not claim successful HTTP, HTTPS, DNS or TLS until requests have been tested end to end.
-
-## Pending tasks
-
-1. Inspect Ingress routing rules, Service selector and ready EndpointSlices.
-2. Test the existing NGINX pod/Service without duplicating deployments.
-3. Check Service endpoints and Traefik route handling.
-4. Confirm access from an authorized tailnet device, with no unintended internet reachability.
-5. Implement deliberate TLS, DNS and monitoring as separate validated phases.
+Keep traffic inside Tailscale for the current phase. Disable Tailscale Funnel unless a public endpoint is deliberately required and reviewed. A Service of type `LoadBalancer` is not automatically a publicly reachable cloud load balancer. The later Phase 6 HTTPS tests verify client connectivity and TLS.
 
 ## 2026-11-10 — Routing verification passed
 
-A temporary in-cluster curl pod requested `http://traefik.kube-system.svc.cluster.local/` and received `HTTP/1.1 200 OK`, `Content-Type: text/html`, `Server: nginx/1.30.6`. This directly verifies Traefik-to-NGINX routing through the existing Ingress. See [Phase 5 verification](phase-5-verification.md) for full evidence, caveats, and diagnostic-pod cleanup. Private DNS, TLS and OCI exposure checks remain future steps.
+A temporary in-cluster curl pod requested `http://traefik.kube-system.svc.cluster.local/` and received `HTTP/1.1 200 OK`, `Content-Type: text/html`, `Server: nginx/1.30.6`. This directly verifies Traefik-to-NGINX routing through the existing Ingress. See [Phase 5 verification](phase-5-verification.md) for full evidence, caveats, and diagnostic-pod cleanup.
 
 ## Follow-up — Phase 6 HTTPS/TLS verified
 
-A separate TLS-enabled Traefik Ingress was added without modifying the original HTTP Ingress. The Windows Tailscale browser later confirmed an encrypted connection and the NGINX page, with an independent Windows cURL HTTP 200 result. A stale Tailscale Serve proxy was cleared. See the [unified Phase 6 runbook](../06-https-tls/README.md). Public exposure audit remains pending.
+A separate TLS-enabled Traefik Ingress was added without modifying the original HTTP Ingress. The Windows Tailscale browser later confirmed an encrypted connection and the NGINX page, with an independent Windows cURL HTTP 200 result. A stale Tailscale Serve proxy was cleared. See the [unified Phase 6 runbook](../06-https-tls/README.md).
