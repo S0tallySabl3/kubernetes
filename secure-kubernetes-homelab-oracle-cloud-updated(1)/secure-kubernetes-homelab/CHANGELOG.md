@@ -1,5 +1,13 @@
 # Change log
 
+## 2026-11-17 — Ubuntu OpenSSH root-login hardening
+
+- Reviewed effective OpenSSH authentication settings: public-key authentication enabled; password and keyboard-interactive authentication disabled; direct root key authentication initially permitted by `prohibit-password`.
+- Created an OpenSSH drop-in setting `PermitRootLogin no`.
+- Verified the effective setting using `sudo sshd -T`; a subsequent fresh key-based SSH login to the non-root Ubuntu administration account succeeded.
+- Added [Ubuntu SSH hardening documentation](docs/05-security/ubuntu-ssh-hardening.md) and sanitized terminal evidence under [screenshots/07-ubuntu-ssh](screenshots/07-ubuntu-ssh/README.md).
+- Did not publish usernames, IP addresses, full hostnames or private-key filenames.
+
 ## 2026-11-16 — Tailscale Zero Trust access-control hardening
 
 - Replaced the Tailscale general allow-all grant with one restricted to two designated client devices, the `tag:cloud-server` destination, and TCP ports 22 and 443.

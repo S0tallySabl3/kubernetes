@@ -3,6 +3,7 @@
 Screenshots are published only after identifying hostnames, prompts, IP addresses, credentials and cloud account details are masked. Raw certificate/private-key or Kubernetes Secret values are never published.
 
 - [Tailscale connectivity evidence](01-tailscale/README.md)
+- [Ubuntu SSH root-login hardening evidence](07-ubuntu-ssh/README.md)
 - [OCI evidence](02-oracle-cloud/)
 - [Phase 6 HTTPS/TLS redacted screenshots (10 verified images)](06-https-tls/README.md)
 

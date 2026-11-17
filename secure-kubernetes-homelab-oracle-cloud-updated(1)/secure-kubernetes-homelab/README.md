@@ -2,10 +2,11 @@
 
 Hands-on infrastructure lab deployed on Oracle Cloud Infrastructure (OCI), using Tailscale for private access, K3s for Kubernetes orchestration, Traefik for ingress routing, and NGINX as a web workload. The focus is **deploying fundamental infrastructure and applying basic, demonstrable hardening measures**, with documented configuration and verification.
 
-> **Current documented state (2026-11-16):** Phase 6 private HTTPS deployed: Let's Encrypt certificate from Tailscale → Kubernetes TLS Secret → Traefik HTTPS Ingress → NGINX. After clearing a stale Tailscale Serve proxy, a distinct Windows tailnet client successfully connected via HTTPS; its browser displayed **Connection Is Encrypted** and Windows cURL returned **HTTP/1.1 200 OK**.
+> **Current documented state (2026-11-17):** Phase 6 private HTTPS deployed: Let's Encrypt certificate from Tailscale → Kubernetes TLS Secret → Traefik HTTPS Ingress → NGINX. After clearing a stale Tailscale Serve proxy, a distinct Windows tailnet client successfully connected via HTTPS; its browser displayed **Connection Is Encrypted** and Windows cURL returned **HTTP/1.1 200 OK**.
 
 ## Verified foundational security measures
 
+- Disabled direct root SSH login using an OpenSSH configuration drop-in; verified `permitrootlogin no` and a successful fresh non-root SSH connection. [Ubuntu SSH hardening](docs/05-security/ubuntu-ssh-hardening.md).
 - Replaced the unrestricted Tailscale general access grant with a rule for two authorized tailnet devices to reach the cloud server on TCP 22 and 443; verified HTTPS availability and a failed TCP 6443 test over Tailscale. [Access-control record](docs/01-tailscale/access-control-hardening.md).
 - Migrated administration from temporary public SSH bootstrap to private SSH access over Tailscale.
 - Configured outbound access through an OCI NAT Gateway and removed the bootstrap Internet Gateway (as recorded in the migration tests).
@@ -46,6 +47,7 @@ The NAT Gateway provides outbound connectivity, while Tailscale supplies the pri
 | Traefik-to-NGINX routing | Verified | 2026-11-10 in-cluster curl to Traefik Service returned NGINX HTTP 200 |
 | **Phase 6 — private HTTPS/TLS** | **Verified from Windows client** | TLS certificate, Kubernetes Secret, Traefik HTTPS Ingress, Windows browser encrypted and `curl.exe` HTTP 200; [evidence](docs/06-https-tls/README.md) |
 | **Tailscale access-control hardening** | **Restricted grant applied and tested** | Wildcard grant removed; HTTPS works; TCP 6443 refused via Tailscale; [validation record](docs/01-tailscale/access-control-hardening.md) |
+| **Ubuntu SSH hardening** | **Direct root SSH login disabled and verified** | Effective OpenSSH setting `permitrootlogin no`; new non-root SSH login succeeded; [record](docs/05-security/ubuntu-ssh-hardening.md) |
 
 ## Reusable manifests
 
@@ -58,6 +60,7 @@ The NAT Gateway provides outbound connectivity, while Tailscale supplies the pri
 - [Architecture and migration decisions](docs/architecture.md)
 - [Tailscale deployment](docs/01-tailscale/README.md)
 - [Tailscale Zero Trust access-control hardening and validation](docs/01-tailscale/access-control-hardening.md)
+- [Ubuntu SSH authentication hardening and evidence](docs/05-security/ubuntu-ssh-hardening.md)
 - [OCI network history and troubleshooting](docs/02-oracle-cloud/networking.md)
 - [OCI SSH troubleshooting](docs/02-oracle-cloud/ssh-and-troubleshooting.md)
 - [k3s installation and verification](docs/03-kubernetes/README.md)
