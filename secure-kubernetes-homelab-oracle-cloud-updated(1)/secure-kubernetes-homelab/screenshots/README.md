@@ -4,6 +4,7 @@ Screenshots are published only after identifying hostnames, prompts, IP addresse
 
 - [Tailscale connectivity evidence](01-tailscale/README.md)
 - [Ubuntu SSH root-login hardening evidence](07-ubuntu-ssh/README.md)
+- [Ubuntu rpcbind port 111 closure evidence](08-ubuntu-rpcbind/README.md)
 - [OCI evidence](02-oracle-cloud/)
 - [Phase 6 HTTPS/TLS redacted screenshots (10 verified images)](06-https-tls/README.md)
 

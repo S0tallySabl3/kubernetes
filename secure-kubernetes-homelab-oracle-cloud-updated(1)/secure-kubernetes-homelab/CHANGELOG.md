@@ -1,5 +1,13 @@
 # Change log
 
+## 2026-11-19 — Ubuntu rpcbind service hardening
+
+- Investigated `rpcbind` after port 111 was observed listening on IPv4 and IPv6 (TCP/UDP).
+- Checked reverse systemd dependencies, NFS mounts and registered RPC programs; no additional RPC program was registered, and no NFS mount was visible on the host.
+- Disabled and stopped `rpcbind.socket` and `rpcbind.service` using `systemctl disable --now`.
+- Verified both units inactive and disabled, then confirmed `ss` returned no TCP/UDP port 111 listeners.
+- Added [methodology and validation record](docs/05-security/ubuntu-rpcbind-hardening.md) plus an [authentic redacted screenshot](screenshots/08-ubuntu-rpcbind/01-port-111-no-listeners-redacted.png) with identifying terminal prompt removed.
+
 ## 2026-11-17 — Ubuntu OpenSSH root-login hardening
 
 - Reviewed effective OpenSSH authentication settings: public-key authentication enabled; password and keyboard-interactive authentication disabled; direct root key authentication initially permitted by `prohibit-password`.
