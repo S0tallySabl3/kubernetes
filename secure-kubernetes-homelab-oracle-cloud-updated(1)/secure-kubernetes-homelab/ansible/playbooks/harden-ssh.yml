@@ -1,0 +1,32 @@
+---
+- name: Harden Ubuntu SSH Configuration
+  hosts: webservers
+  become: true
+  gather_facts: false
+
+  tasks:
+    - name: Enforce SSH authentication security
+      ansible.builtin.copy:
+        dest: /etc/ssh/sshd_config.d/00-disable-root-login.conf
+        content: |
+          PermitRootLogin no
+          PasswordAuthentication no
+          KbdInteractiveAuthentication no
+          PubkeyAuthentication yes
+        owner: root
+        group: root
+        mode: '0644'
+        backup: true
+      notify:
+        - Validate SSH configuration
+        - Reload SSH
+
+  handlers:
+    - name: Validate SSH configuration
+      ansible.builtin.command: /usr/sbin/sshd -t
+      changed_when: false
+
+    - name: Reload SSH
+      ansible.builtin.service:
+        name: ssh
+        state: reloaded

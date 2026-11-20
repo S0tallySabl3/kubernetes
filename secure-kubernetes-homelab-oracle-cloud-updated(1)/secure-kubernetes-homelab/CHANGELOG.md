@@ -1,5 +1,14 @@
 # Change log
 
+## 2026-11-20 — Automate OpenSSH authentication hardening with Ansible
+
+- Established Ansible management from the Ubuntu laptop using an INI inventory and SSH transport over Tailscale; inventory parsing and `ansible.builtin.ping` succeeded.
+- Published [the reusable SSH hardening playbook](ansible/playbooks/harden-ssh.yml) enforcing four OpenSSH authentication directives via a managed drop-in.
+- Observed a successful update: file task `changed`, syntax check handler `ok`, SSH reload `changed`; recap `ok=3 changed=2 failed=0 unreachable=0`.
+- Successfully established a new SSH session from the Ubuntu laptop after the playbook ran.
+- Added [automation deployment notes](ansible/README.md) and a placeholder-only [INI inventory template](ansible/inventory.example.ini), keeping actual private keys and device addresses out of the repository.
+- Preserved earlier manually verified host hardening notes; the Ansible deployment is a separate automation milestone.
+
 ## 2026-11-19 — Ubuntu rpcbind service hardening
 
 - Investigated `rpcbind` after port 111 was observed listening on IPv4 and IPv6 (TCP/UDP).

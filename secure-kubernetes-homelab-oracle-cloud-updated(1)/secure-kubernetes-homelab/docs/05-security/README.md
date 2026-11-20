@@ -6,6 +6,7 @@ This lab demonstrates fundamental security controls supporting a Kubernetes webs
 
 - Established private SSH administration over Tailscale.
 - Disabled direct root SSH login using `PermitRootLogin no`; confirmed the effective setting and successful non-root SSH access. [Ubuntu SSH hardening](ubuntu-ssh-hardening.md).
+- Later automated the OpenSSH authentication baseline (root login, password, keyboard-interactive and public-key settings) using Ansible; the update and SSH reload succeeded with a new non-root SSH login afterward. [Ansible deployment record](../../ansible/README.md).
 - Disabled unused `rpcbind` and its systemd socket after dependency review; confirmed TCP/UDP port 111 had no listeners. [Ubuntu rpcbind hardening](ubuntu-rpcbind-hardening.md).
 - Applied a least-privilege Tailscale access grant for two authorized devices, the tagged cloud server, and TCP 22/443. [Policy change and validation](../01-tailscale/access-control-hardening.md).
 - Migrated outbound connectivity to an OCI NAT Gateway and removed the initial Internet Gateway, as recorded in the network migration tests.

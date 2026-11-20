@@ -77,3 +77,7 @@ The supplied successful SSH re-login screenshot was also sanitized locally. For 
 Disabling root SSH login reduces direct privileged authentication paths. Administrators continue to use a named non-root account and elevate privileges through `sudo` when necessary. This reinforces the Tailscale network-level controls without changing Kubernetes, Traefik, NGINX, or OCI routing.
 
 **Outcome:** OpenSSH reports `PermitRootLogin no`, and a new non-root SSH session succeeded after the change.
+
+## Automation follow-up (November 20, 2026)
+
+The Ubuntu SSH authentication settings were later managed using an [Ansible playbook](../../ansible/README.md) rather than only manual changes. The playbook also covers password, keyboard-interactive, and public-key authentication settings and was applied successfully with a subsequent SSH login.

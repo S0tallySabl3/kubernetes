@@ -1,0 +1,7 @@
+# Environment-specific inventory and secrets
+inventory.ini
+*.retry
+*.key
+*.pem
+.vault_pass
+.vault_pass.*
